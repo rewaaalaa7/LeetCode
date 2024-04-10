@@ -1,0 +1,19 @@
+# Write your MySQL query statement below
+WITH x as (
+select *
+from students CROSS JOIN subjects),  # all students attends all subjects
+
+y as (
+select student_id, subject_name, count(subject_name) as count
+from examinations 
+group by student_id, subject_name) # counts how many times each student attend the exam 
+
+
+select x.student_id, x.student_name, x.subject_name, 
+case when count IS NOT NULL then count
+else 0 
+END as attended_exams
+from x left join y 
+on(x.student_id = y.student_id)
+and (x.subject_name = y.subject_name)
+order by x.student_id, x.subject_name
