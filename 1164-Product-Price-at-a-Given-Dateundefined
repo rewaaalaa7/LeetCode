@@ -1,0 +1,10 @@
+# Write your MySQL query statement below
+select distinct p.product_id,
+case when price is null then 10 else price end as price
+from products p left join
+(select product_id, new_price as price, row_number() over(partition by product_id order by change_date desc) as rn
+from products
+where change_date <= '2019-08-16'
+order by product_id) as sq
+on p.product_id=sq.product_id
+and sq.rn=1
